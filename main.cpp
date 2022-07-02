@@ -29,7 +29,7 @@ std::ostream &operator<<(std::ostream &os, const std::vector<T> &v) {
     std::cout << #x " = " << (x) << std::endl;                                 \
   } while (false)
 
-std::vector<int> divide_size(const int N, const int m) {
+std::vector<int> get_sendcounts(const int N, const int m) {
   if (m == N) {
     std::vector<int> ret;
     ret.resize(m, 1);
@@ -47,6 +47,15 @@ std::vector<int> divide_size(const int N, const int m) {
     std::fill(ret.begin(), ret.begin() + N, 1);
     return ret;
   }
+}
+
+std::vector<int> get_displs(const std::vector<int> &sendcounts) {
+  std::vector<int> displs;
+  displs.reserve(sendcounts.size());
+  displs.push_back(0);
+  std::partial_sum(sendcounts.begin(), sendcounts.end() - 1,
+                   std::back_inserter(displs));
+  return displs;
 }
 
 using Matrix = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic,
@@ -82,23 +91,23 @@ int main(int argc, char *argv[]) {
   Matrix A;
   Matrix B(N, N);
   Matrix R(N, N);
-  std::chrono::steady_clock::time_point t1;
+  using Clock = std::chrono::system_clock;
+  Clock::time_point t1;
   if (world.rank() == 0) {
     A.resize(N, N);
     set_random(A);
     set_random(B);
     PRINT(world.size());
-    t1 = std::chrono::steady_clock::now();
+    t1 = Clock::now();
   }
   // array describing how many elements to send to each process
-  std::vector<int> sendcounts = divide_size(N, world.size());
-  std::for_each(sendcounts.begin(), sendcounts.end(), [N](int &x) { x *= N; });
+  const auto sendcounts = [&] {
+    std::vector<int> ret = get_sendcounts(N, world.size());
+    std::for_each(ret.begin(), ret.end(), [&](int &x) { x *= N; });
+    return ret;
+  }();
   // array describing the displacements where each segment begins
-  std::vector<int> displs;
-  displs.reserve(world.size());
-  displs.push_back(0);
-  std::partial_sum(sendcounts.begin(), sendcounts.end() - 1,
-                   std::back_inserter(displs));
+  const std::vector<int> displs = get_displs(sendcounts);
   if (world.rank() == 0) {
     PRINT(sendcounts);
     PRINT(displs);
@@ -134,7 +143,7 @@ int main(int argc, char *argv[]) {
                       displs, 0);
 
   if (world.rank() == 0) {
-    const auto t2 = std::chrono::steady_clock::now();
+    const auto t2 = Clock::now();
     std::cout << "Elapsed: " << std::chrono::duration<double>(t2 - t1).count()
               << " s" << std::endl;
   }
