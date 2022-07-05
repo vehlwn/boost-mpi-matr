@@ -1,6 +1,8 @@
 # boost-mpi-matr
 
-Parallel matrix multiplication algorithm with [Boost::mpi](https://www.boost.org/doc/libs/1_77_0/doc/html/mpi/tutorial.html) and [Eigen3](https://eigen.tuxfamily.org/index.php?title=Main_Page).
+Parallel matrix multiplication algorithm with
+[Boost::mpi](https://www.boost.org/doc/libs/1_77_0/doc/html/mpi/tutorial.html)
+and [Eigen3](https://eigen.tuxfamily.org/index.php?title=Main_Page).
 
 ## Build
 
@@ -9,6 +11,16 @@ $ mkdir build
 $ cd build
 $ cmake -GNinja .. -DCMAKE_BUILD_TYPE=Release
 $ cmake --build .
+
+# Alternative with meson:
+$ meson setup build --buildtype release
+$ cd build
+$ meson compile
+```
+
+## Run
+
+```bash
 $ mpirun --oversubscribe -n 8 ./a 100
 world.size() = 8
 sendcounts = [1300, 1300, 1300, 1300, 1200, 1200, 1200, 1200]
