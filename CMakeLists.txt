@@ -7,6 +7,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(Boost REQUIRED COMPONENTS mpi)
 find_package(Eigen3 REQUIRED)
+find_package(MPI REQUIRED)
 add_executable(
   ${PROJECT_NAME}
   main.cpp
@@ -14,9 +15,11 @@ add_executable(
 target_include_directories(
   ${PROJECT_NAME} PUBLIC
   ${Boost_INCLUDE_DIR}
+  ${MPI_CXX_INCLUDE_DIRS}
 )
 target_link_libraries(
   ${PROJECT_NAME} PUBLIC
   ${Boost_LIBRARIES}
+  ${MPI_CXX_LIBRARIES}
   Eigen3::Eigen
 )

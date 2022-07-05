@@ -71,9 +71,9 @@ void set_random(Matrix &m) {
                (b - a) +
            a;
   };
-  for (auto &x : m.reshaped()) {
-    x = dist(-1, 1);
-  }
+  for (int row = 0; row != m.rows(); row++)
+    for (int col = 0; col != m.cols(); col++)
+      m(row, col) = dist(-1, 1);
 }
 
 int main(int argc, char *argv[]) {
