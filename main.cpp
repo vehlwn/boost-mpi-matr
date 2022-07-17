@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <chrono>
+#include <fstream>
 #include <iostream>
 #include <iterator>
 #include <limits>
@@ -80,6 +81,8 @@ int main(int argc, char *argv[]) {
   boost::mpi::environment env{argc, argv};
   boost::mpi::communicator world;
 
+  Eigen::setNbThreads(1);
+
   int N = 100;
   if (argc >= 2) {
     N = boost::lexical_cast<int>(argv[1]);
@@ -144,8 +147,13 @@ int main(int argc, char *argv[]) {
 
   if (world.rank() == 0) {
     const auto t2 = Clock::now();
-    std::cout << "Elapsed: " << std::chrono::duration<double>(t2 - t1).count()
-              << " s" << std::endl;
+    const double interval = std::chrono::duration<double>(t2 - t1).count();
+    std::cout << "Elapsed: " << interval << " s" << std::endl;
+    if (std::ofstream of{"times.txt", std::ios::app}) {
+      of << world.size() << '\t' << N << '\t' << interval << '\n';
+    } else {
+      std::cout << "Failed to open output file" << std::endl;
+    }
   }
 
   return 0;
