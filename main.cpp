@@ -106,7 +106,8 @@ int main(int argc, char *argv[]) {
   // array describing how many elements to send to each process
   const auto sendcounts = [&] {
     std::vector<int> ret = get_sendcounts(N, world.size());
-    std::for_each(ret.begin(), ret.end(), [&](int &x) { x *= N; });
+    std::transform(ret.begin(), ret.end(), ret.begin(),
+                   [&](int x) { return x * N; });
     return ret;
   }();
   // array describing the displacements where each segment begins
