@@ -18,7 +18,7 @@ $ cd build
 $ meson compile
 ```
 
-## Run
+## Run single time
 
 ```bash
 $ mpirun --oversubscribe -n 8 ./a 100
@@ -53,3 +53,18 @@ Process 0 recieved matrix B
 Process 0 calculating localR...
 Elapsed: 0.000613005 s
 ```
+
+## Run multiple times and plot graphs
+
+```bash
+$ cd example
+$ ../multi-run.sh ../build/a
+$ mv ../build/times.txt .
+$ python3 fit.py
+```
+
+## Example graphs
+
+![times](example/times.png)
+
+![speedup](example/speedup.png)
