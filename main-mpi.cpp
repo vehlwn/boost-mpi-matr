@@ -150,7 +150,7 @@ int main(int argc, char *argv[]) {
     const auto t2 = Clock::now();
     const double interval = std::chrono::duration<double>(t2 - t1).count();
     std::cout << "Elapsed: " << interval << " s" << std::endl;
-    if (std::ofstream of{"times.txt", std::ios::app}) {
+    if (std::ofstream of{"times-mpi.txt", std::ios::app}) {
       of << world.size() << '\t' << N << '\t' << interval << '\n';
     } else {
       std::cout << "Failed to open output file" << std::endl;

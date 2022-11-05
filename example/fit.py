@@ -1,10 +1,11 @@
+import argparse
+import collections
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy
-import scipy.optimize
-import collections
-import typing
 import numpy.polynomial.polynomial as np_poly
+import scipy.optimize
+import typing
 
 model_t = dict[int, dict[int, typing.List[float]]]
 
@@ -33,7 +34,17 @@ def make_average(model: model_t) -> avg_model_t:
     return ret
 
 
-model = read_file("times.txt")
+parser = argparse.ArgumentParser(
+    description="Draw time series",
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+)
+parser.add_argument(
+    "input_file", help="name of a file with time data"
+)
+parser.add_argument("suffix", help="suffix appended to output files")
+args = parser.parse_args()
+
+model = read_file(args.input_file)
 avg_model = make_average(model)
 
 
@@ -59,7 +70,7 @@ def fit_for_world_size(world_size: int, avg_model: avg_model_t) -> numpy.ndarray
 
 def plot_time(avg_model: avg_model_t):
     plt.clf()
-    plt.title("$T_p(width)$")
+    plt.title("$T_p(width)$ " + args.suffix)
     plt.xlabel("Width")
     plt.ylabel("Seconds, $T_p$")
     plt.grid(True, linestyle=":")
@@ -77,12 +88,12 @@ def plot_time(avg_model: avg_model_t):
         if color == max_colors:
             color = 0
     plt.legend(ncol=3)
-    plt.savefig("times.png", dpi=300)
+    plt.savefig(f"times-{args.suffix}.png", dpi=300)
 
 
 def plot_speedup(avg_model: avg_model_t):
     plt.clf()
-    plt.title(r"$S_p = \frac{T_1}{T_p}$")
+    plt.title(r"$S_p = \frac{T_1}{T_p}$ " + args.suffix)
     plt.xlabel("Processes, p")
     plt.ylabel("$S_p$")
     plt.grid(True, linestyle=":")
@@ -94,7 +105,7 @@ def plot_speedup(avg_model: avg_model_t):
         t_p = width_time_list[-1][1]
         y_data.append(t_1 / t_p)
     plt.plot(x_data, y_data)
-    plt.savefig("speedup.png", dpi=300)
+    plt.savefig(f"speedup-{args.suffix}.png", dpi=300)
 
 
 plot_time(avg_model)
