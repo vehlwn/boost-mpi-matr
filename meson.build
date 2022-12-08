@@ -9,5 +9,13 @@ project(
 boost_dep = dependency('boost', modules: ['mpi'], version: '>=1.71.0')
 mpi_dep = dependency('mpi', language: 'cpp')
 eigen_dep = dependency('eigen3')
+openmp_dep = dependency('OpenMP', language: 'cpp')
 
-executable('a', 'main.cpp', dependencies: [boost_dep, mpi_dep, eigen_dep])
+executable('main-mpi',
+  ['random_matrix.hpp', 'main-mpi.cpp'],
+  dependencies: [boost_dep, mpi_dep, eigen_dep]
+)
+executable('main-openmp',
+  ['random_matrix.hpp', 'main-openmp.cpp'],
+  dependencies: [boost_dep, openmp_dep, eigen_dep]
+)
