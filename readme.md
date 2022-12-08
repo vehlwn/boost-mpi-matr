@@ -59,9 +59,9 @@ Elapsed: 0.000613005 s
 ```bash
 $ cd example
 $ ../multi-run.sh mpi ../build/main-mpi
-$ python3 fit.py mpi
+$ python3 fit.py times-mpi.txt mpi
 $ ../multi-run.sh openmp ../build/main-openmp
-$ python3 fit.py openmp
+$ python3 fit.py times-openmp.txt openmp
 ```
 
 ## Example graphs
