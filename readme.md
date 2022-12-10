@@ -16,6 +16,11 @@ $ cmake --build .
 $ meson setup build --buildtype release
 $ cd build
 $ meson compile
+
+# Alternative with conan:
+$ mkdir build && cd build
+$ conan install .. --build=missing -s build_type=Release
+$ conan build ..
 ```
 
 ## Run single time
